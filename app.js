@@ -5,6 +5,7 @@ const app = express();
 
 const apiRoutes = require('./src/modules/routes/routes')
 
+app.use(cors())
 app.use(express.json())
 app.use('/', apiRoutes)
 
