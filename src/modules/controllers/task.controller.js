@@ -35,15 +35,13 @@ module.exports.deleteTask = (req, res, next) => {
 };
 
 module.exports.changeTaskInfo = (req, res, next) => {
-	const body = req.body;
-	const id = body._id
-	if (body.hasOwnProperty('_id') && (body.hasOwnProperty('text') || body.hasOwnProperty('isCheck'))) {
-		Task.updateOne({ _id: id }, body).then(() => {
-			Task.find().then((result) => {
-				res.send({ data: result });
-			});
-		});
-	} else {
-		res.status(404).send('Error');
-	}
+  if (req.query.hasOwnProperty('id') && (req.body.hasOwnProperty('text') || req.body.hasOwnProperty('isCheck'))) {
+    Task.updateOne({ _id: req.query.id }, req.body).then((result) => {
+      Task.find().then((result) => {
+        res.send({ data: result });
+      });
+    });
+  } else {
+    res.status(404).send('Somthing wrong');
+  }
 };
