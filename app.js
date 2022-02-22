@@ -9,8 +9,6 @@ app.use(cors())
 app.use(express.json())
 app.use('/', apiRoutes)
 
-const { MongoClient } = require('mongodb');
-const req = require('express/lib/request'); // what it is??????????????????????????????
 const uri = "mongodb+srv://magnifico99:28121999A@cluster0.iscaj.mongodb.net/magnifico99?retryWrites=true&w=majority";
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 
