@@ -9,39 +9,40 @@ module.exports.getAllTasks = (req, res, next) => {
 module.exports.createNewTask = (req, res, next) => {
 	if (req.body.hasOwnProperty('text') && req.body.hasOwnProperty('isCheck')) {
 		const task = new Task(req.body);
-		task //whats happend with code style?
-			.save()
-			.then((result) => {
-				res.send(result);
-			})
-			.catch((err) => console.log(err)); // res.status(number).send('message');
+		task.save().then((result) => {
+			res.send(result);
+		})
+			.catch((err) => console.log(err));
 	} else {
 		res.status(404).send('Error');
 	}
 };
 
-module.exports.deleteTask = (req, res, next) => { //do you need next?
+module.exports.deleteTask = (req, res) => {
 	if (req.query.id) {
-		Task.deleteOne({ _id: req.query.id }) // destructure req.query.id
+		const id = req.query.id
+		Task.deleteOne({ _id: id })
 			.then((result) => {
 				Task.find().then((result) => {
 					res.send(result);
 				});
 			})
-			.catch((err) => console.log(err)); // look at 17 string
+			.catch((err) => console.log(err));
 	} else {
 		res.status(404).send('Error');
 	}
 };
 
-module.exports.changeTaskInfo = (req, res, next) => { // look at 23 str
-  if (req.query.hasOwnProperty('id') && (req.body.hasOwnProperty('text') || req.body.hasOwnProperty('isCheck'))) { //it is uncorrect condition
-    Task.updateOne({ _id: req.query.id }, req.body).then((result) => { // destructure req.query.id 
-      Task.find().then((result) => {
-        res.send({ data: result });
-      });
-    }); // why u don't use .catch()?
-  } else {
-    res.status(404).send('Somthing wrong');
-  }
+module.exports.changeTaskInfo = (req, res) => {
+	if (req.query.hasOwnProperty('id') && (req.body.hasOwnProperty('text') || req.body.hasOwnProperty('isCheck'))) {
+		body = req.query
+		Task.updateOne({ _id: body.id }, req.body).then((result) => {
+			Task.find().then((result) => {
+				res.send({ data: result });
+			});
+		})
+			.catch((err) => console.log(err));
+	} else {
+		res.status(404).send('Error');
+	}
 };
