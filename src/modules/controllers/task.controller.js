@@ -9,20 +9,19 @@ module.exports.getAllTasks = (req, res, next) => {
 module.exports.createNewTask = (req, res, next) => {
 	if (req.body.hasOwnProperty('text') && req.body.hasOwnProperty('isCheck')) {
 		const task = new Task(req.body);
-		task
-			.save()
-			.then((result) => {
-				res.send(result);
-			})
+		task.save().then((result) => {
+			res.send(result);
+		})
 			.catch((err) => console.log(err));
 	} else {
 		res.status(404).send('Error');
 	}
 };
 
-module.exports.deleteTask = (req, res, next) => {
+module.exports.deleteTask = (req, res) => {
 	if (req.query.id) {
-		Task.deleteOne({ _id: req.query.id })
+		const id = req.query.id
+		Task.deleteOne({ _id: id })
 			.then((result) => {
 				Task.find().then((result) => {
 					res.send(result);
@@ -34,14 +33,21 @@ module.exports.deleteTask = (req, res, next) => {
 	}
 };
 
-module.exports.changeTaskInfo = (req, res, next) => {
-  if (req.query.hasOwnProperty('id') && (req.body.hasOwnProperty('text') || req.body.hasOwnProperty('isCheck'))) {
-    Task.updateOne({ _id: req.query.id }, req.body).then((result) => {
-      Task.find().then((result) => {
-        res.send({ data: result });
-      });
-    });
-  } else {
-    res.status(404).send('Somthing wrong');
-  }
+module.exports.changeTaskInfo = (req, res) => {
+	if (req.body) {
+		const { body } = req;
+		if (body.hasOwnProperty("_id") &&
+			(body.hasOwnProperty("text") || body.hasOwnProperty("isCheck"))
+		) {
+			Task.updateOne({ _id: body._id }, body).then(() => {
+				Task.find().then((result) => {
+					res.send({ data: result });
+				});
+			});
+		} else {
+			res.status(404).send("u don't send _id or text isCheck ");
+		}
+	} else {
+		res.status(404).send("u don't send body");
+	}
 };
